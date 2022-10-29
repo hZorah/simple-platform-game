@@ -6,7 +6,7 @@ on: [push, pull_request]
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
-  jobs:
+jobs:
   checkLicense:
     name: Check for the Unity license ☑️
     runs-on: ubuntu-latest
