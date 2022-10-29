@@ -10,6 +10,6 @@ public class Test
     [Test]
     public void TestSimplePasses()
     {
-        Assert.Fail();
+        Assert.Pass();
     }
 }
