@@ -36,9 +36,10 @@ jobs:
       - uses: game-ci/unity-test-runner@v2
         id: testRunner
         with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
           testMode: all
 
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Test results (all modes)
-          path: ${{ steps.testRunner.outputs.artifactsPath }}
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: Test results (all modes)
+      #     path: ${{ steps.testRunner.outputs.artifactsPath }}
