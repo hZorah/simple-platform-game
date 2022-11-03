@@ -12,9 +12,8 @@ namespace Core.PlayerCharacter
         [SerializeField] private LayerMask whatIsGround;
         private Vector2 myVelocity;
         private Rigidbody2D myRigidbody;
-        private bool grounded;
         private bool jump;
-        private float movement;
+        [SerializeField] private float movement;
 
         #region Unity Events
         private void Awake()
@@ -23,36 +22,36 @@ namespace Core.PlayerCharacter
         }
         private void Start()
         {
-            grounded = false;
             myVelocity = Vector2.zero;
         }
-        private void Update()
-        {
-            movement = Input.GetAxis("Horizontal");
-            if (Input.GetKeyDown(KeyCode.UpArrow)|| Input.GetKeyDown(KeyCode.Space))
-            {
-                jump = true;
-            }
-        }
+        // private void Update()
+        // {
+        //     movement = Input.GetAxis("Horizontal");
+        //     if (Input.GetKeyDown(KeyCode.UpArrow)|| Input.GetKeyDown(KeyCode.Space))
+        //     {
+        //         jump = true;
+        //     }
+        // }
         private void FixedUpdate()
         {
-            CheckGround();
             if (movement != 0)
             {
                 FlipDirection();
-                MoveHorizontally(movement * Time.fixedDeltaTime * movementSpeed);
             }
+            MoveHorizontally(movement * Time.fixedDeltaTime * movementSpeed);
+            
             if (jump)
             {
-                Jump(jumpForce);
+                PerformJump();
                 jump = false;
             }
         }
         #endregion
 
-        private void CheckGround(){
+        private bool CheckGround()
+        {
             RaycastHit2D hit = Physics2D.Raycast(groundCheck.position, -Vector2.up, 0.1f, whatIsGround);
-            grounded = hit.collider != null;
+            return  hit.collider != null;
         }
 
         private void FlipDirection()
@@ -69,10 +68,20 @@ namespace Core.PlayerCharacter
             myRigidbody.velocity = targetVelocity;
         }
 
-        private void Jump(float jumpForce)
+        private void PerformJump()
         {
-            if (!grounded) return;
-            myRigidbody.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+            if (CheckGround())
+                myRigidbody.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+        }
+
+        public void JumpCommand()
+        {
+            jump = true;
+        }
+
+        public void MoveCommand(float movement)
+        {
+            this.movement = movement;
         }
     }
 }
