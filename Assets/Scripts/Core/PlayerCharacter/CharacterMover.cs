@@ -6,12 +6,13 @@ namespace Core.PlayerCharacter
     public class CharacterMover : MonoBehaviour
     {
         [SerializeField] private float movementSpeed;
-        [Range(0, .3f)] [SerializeField] private float movementSmoothing;
+        [Range(0, .3f)][SerializeField] private float movementSmoothing;
         [SerializeField] private float jumpForce;
         [SerializeField] private Transform groundCheck;
+        [SerializeField] private LayerMask whatIsGround;
         private Vector2 myVelocity;
         private Rigidbody2D myRigidbody;
-        [SerializeField] private bool grounded;
+        private bool grounded;
         private bool jump;
         private float movement;
 
@@ -25,38 +26,45 @@ namespace Core.PlayerCharacter
             grounded = false;
             myVelocity = Vector2.zero;
         }
-        private void Update() {
+        private void Update()
+        {
             movement = Input.GetAxis("Horizontal");
-            if (Input.GetKeyDown(KeyCode.UpArrow)){
+            if (Input.GetKeyDown(KeyCode.UpArrow)|| Input.GetKeyDown(KeyCode.Space))
+            {
                 jump = true;
             }
         }
         private void FixedUpdate()
         {
-            RaycastHit2D hit = Physics2D.Raycast(groundCheck.position, -Vector2.up, 0.1f);
-            grounded = hit.collider != null;
-
-            if (movement != 0){
-                Vector3 scale = transform.localScale;
-                if (movement > 0){
-                    scale.x = 1f;
-                }
-                else {
-                    scale.x = -1f;
-                }
-                transform.localScale = scale;
-                MoveHorizontal(movement * Time.fixedDeltaTime * movementSpeed);
+            CheckGround();
+            if (movement != 0)
+            {
+                FlipDirection();
+                MoveHorizontally(movement * Time.fixedDeltaTime * movementSpeed);
             }
-            if (jump){
-                Jump (jumpForce);
+            if (jump)
+            {
+                Jump(jumpForce);
                 jump = false;
             }
         }
         #endregion
 
-        private void MoveHorizontal(float movement)
+        private void CheckGround(){
+            RaycastHit2D hit = Physics2D.Raycast(groundCheck.position, -Vector2.up, 0.1f, whatIsGround);
+            grounded = hit.collider != null;
+        }
+
+        private void FlipDirection()
         {
-            Vector2 targetVelocity = new Vector2(movement*100f, myRigidbody.velocity.y);
+            Vector3 scale = transform.localScale;
+            scale.x = movement > 0 ? 1f : -1f;
+            transform.localScale = scale;
+        }
+
+        private void MoveHorizontally(float movement)
+        {
+            Vector2 targetVelocity = new(movement * 100f, myRigidbody.velocity.y);
             targetVelocity = Vector2.SmoothDamp(myRigidbody.velocity, targetVelocity, ref myVelocity, movementSmoothing);
             myRigidbody.velocity = targetVelocity;
         }

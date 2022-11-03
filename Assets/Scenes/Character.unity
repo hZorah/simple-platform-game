@@ -132,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 477467632}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ground Check
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -167,7 +167,7 @@ GameObject:
   - component: {fileID: 835128243}
   - component: {fileID: 835128242}
   - component: {fileID: 835128241}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -207,7 +207,9 @@ MonoBehaviour:
   movementSmoothing: 0.05
   jumpForce: 10
   groundCheck: {fileID: 477467632}
-  grounded: 0
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 1
 --- !u!58 &835128242
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -283,7 +285,7 @@ GameObject:
   - component: {fileID: 872735355}
   - component: {fileID: 872735354}
   - component: {fileID: 872735356}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
