@@ -5,16 +5,24 @@ namespace Core.PlayerCharacter
     [RequireComponent(typeof(Animator))]
     public class CharacterAnimator : MonoBehaviour
     {
-        [SerializeField] private Rigidbody2D myRigidbody;
-        private Animator myAnimator;
+        #region Inspector Fields
+        [SerializeField] private Rigidbody2D _rigidbody;
+        #endregion
+        #region Members
+        private Animator m_animator;
+        private static readonly int Horizontal = Animator.StringToHash("Horizontal");
+        private static readonly int Vertical = Animator.StringToHash("Vertical");
+
+        #endregion
+
         #region Unity Events
         private void Awake() {
-            myAnimator = GetComponent<Animator>();
+            m_animator = GetComponent<Animator>();
         }
         private void FixedUpdate() {
 
-            myAnimator.SetFloat("Horizontal", Mathf.Abs(myRigidbody.velocity.x));
-            myAnimator.SetFloat("Vertical", myRigidbody.velocity.y);
+            m_animator.SetFloat(Horizontal, Mathf.Abs(_rigidbody.velocity.x));
+            m_animator.SetFloat(Vertical, _rigidbody.velocity.y);
         }
         #endregion
     }
