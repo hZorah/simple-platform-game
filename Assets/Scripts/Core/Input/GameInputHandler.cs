@@ -2,29 +2,39 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Core.Input
 {
     public class GameInputHandler : MonoBehaviour
     {
-        [SerializeField] private UnityEvent Jump;
-        [SerializeField] private App.Utils.UnityEventFloat MoveHorizontally;
+         #region Inspector Fields
+        [SerializeField] private UnityEvent _jump;
+        [SerializeField] private App.Utils.UnityEventFloat _moveHorizontally;
+        #endregion
+        
+        /// <summary>
+        /// TODO: write summary
+        /// </summary>
         public void Move(InputAction.CallbackContext context)
         {
             Vector2 input = context.ReadValue<Vector2>();
-            MoveHorizontally?.Invoke(input.x);
+            _moveHorizontally?.Invoke(input.x);
 
             if (input.y > 0)
             {
-                Jump?.Invoke();
+                _jump?.Invoke();
             }
         }
 
+        /// <summary>
+        /// TODO: write summary
+        /// </summary>
         public void Fire(InputAction.CallbackContext context)
         {
             if (context.performed)
             {
-                Jump?.Invoke();
+                _jump?.Invoke();
             }
         }
     }

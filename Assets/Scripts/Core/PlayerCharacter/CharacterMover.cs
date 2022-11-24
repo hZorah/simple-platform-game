@@ -5,83 +5,89 @@ namespace Core.PlayerCharacter
     [RequireComponent(typeof(Rigidbody2D))]
     public class CharacterMover : MonoBehaviour
     {
-        [SerializeField] private float movementSpeed;
-        [Range(0, .3f)][SerializeField] private float movementSmoothing;
-        [SerializeField] private float jumpForce;
-        [SerializeField] private Transform groundCheck;
-        [SerializeField] private LayerMask whatIsGround;
-        private Vector2 myVelocity;
-        private Rigidbody2D myRigidbody;
-        private bool jump;
-        [SerializeField] private float movement;
+        #region Inspector Fields
+        [SerializeField] private CharacterMovementParameters _parameters;
+        [SerializeField] private Transform _groundCheck;
+        #endregion
+
+        #region Members
+        private Vector2 m_velocity;
+        private Rigidbody2D m_rigidbody;
+        private bool m_jump;
+        private float m_movement;
+        #endregion
 
         #region Unity Events
         private void Awake()
         {
-            myRigidbody = GetComponent<Rigidbody2D>();
+            m_rigidbody = GetComponent<Rigidbody2D>();
         }
         private void Start()
         {
-            myVelocity = Vector2.zero;
+            m_velocity = Vector2.zero;
         }
-        // private void Update()
-        // {
-        //     movement = Input.GetAxis("Horizontal");
-        //     if (Input.GetKeyDown(KeyCode.UpArrow)|| Input.GetKeyDown(KeyCode.Space))
-        //     {
-        //         jump = true;
-        //     }
-        // }
+
         private void FixedUpdate()
         {
-            if (movement != 0)
-            {
-                FlipDirection();
-            }
-            MoveHorizontally(movement * Time.fixedDeltaTime * movementSpeed);
-            
-            if (jump)
-            {
-                PerformJump();
-                jump = false;
-            }
+            MoveCharacter();
         }
         #endregion
 
+        private void MoveCharacter()
+        {
+            if (m_movement != 0)
+            {
+                FlipDirection();
+            }
+            MoveHorizontally(m_movement * Time.fixedDeltaTime * _parameters.MovementSpeed);
+
+            if (!m_jump) return;
+            PerformJump();
+            m_jump = false;
+        }
+
         private bool CheckGround()
         {
-            RaycastHit2D hit = Physics2D.Raycast(groundCheck.position, -Vector2.up, 0.1f, whatIsGround);
-            return  hit.collider != null;
+            RaycastHit2D hit = Physics2D.Raycast(_groundCheck.position, -Vector2.up, 0.1f, _parameters.WhatIsGround);
+            return hit.collider != null;
         }
 
         private void FlipDirection()
         {
             Vector3 scale = transform.localScale;
-            scale.x = movement > 0 ? 1f : -1f;
+            scale.x = m_movement > 0 ? 1f : -1f;
             transform.localScale = scale;
         }
 
         private void MoveHorizontally(float movement)
         {
-            Vector2 targetVelocity = new(movement * 100f, myRigidbody.velocity.y);
-            targetVelocity = Vector2.SmoothDamp(myRigidbody.velocity, targetVelocity, ref myVelocity, movementSmoothing);
-            myRigidbody.velocity = targetVelocity;
+            Vector2 velocity = m_rigidbody.velocity;
+            Vector2 targetVelocity = new(movement * 100f, velocity.y);
+            targetVelocity = Vector2.SmoothDamp(velocity, targetVelocity, ref m_velocity, _parameters.MovementSmoothing);
+            m_rigidbody.velocity = targetVelocity;
         }
 
         private void PerformJump()
         {
             if (CheckGround())
-                myRigidbody.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+                m_rigidbody.AddForce(new Vector2(0f, _parameters.JumpForce), ForceMode2D.Impulse);
         }
 
+        /// <summary>
+        /// Makes character jump
+        /// </summary>
         public void JumpCommand()
         {
-            jump = true;
+            m_jump = true;
         }
 
+        /// <summary>
+        /// Moves character sideways
+        /// </summary>
+        /// <param name="movement">The direction of the movement</param>
         public void MoveCommand(float movement)
         {
-            this.movement = movement;
+            this.m_movement = movement;
         }
     }
 }
