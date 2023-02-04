@@ -1,8 +1,6 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 namespace Core.Input
 {
